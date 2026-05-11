@@ -1,15 +1,16 @@
-import React from 'react';
+import React from "react";
 import Profile from "./Profile";
 import Status from "./Status";
 import "../../styles/MyPage.css";
 
-function MyPage() {
+
+const MyPage = () => {
   return (
-    <div className="mypage">
+    <main className="mypage">
       <Profile />
       <Status />
-    </div>
+    </main>
   );
-}
+};
 
 export default MyPage;

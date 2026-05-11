@@ -1,10 +1,17 @@
-import React from 'react';
-import { useRef, useState } from "react";
-import "../../styles/MyPage.css";
-import profileImg from "../../assets/img/lion.jpg";
+import React, { useRef, useState, useEffect } from "react";
 
-function Profile() {
+const profileImg = "https://via.placeholder.com/120";
+
+const Profile = () => {
   const fileInputRef = useRef(null);
+
+  const [nickname] = useState("Likelion#1253");
+  const [intro, setIntro] = useState("안녕하세요");
+  const [favoriteSong, setFavoriteSong] = useState("내꺼하자 - 인피니트");
+
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [profileImageUrl] = useState("");
 
   const handleClickEditIcon = () => {
     fileInputRef.current?.click();
@@ -14,6 +21,8 @@ function Profile() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    setSelectedImageFile(file);
+
     if (previewUrl) {
       URL.revokeObjectURL(previewUrl);
     }
@@ -21,77 +30,83 @@ function Profile() {
     setPreviewUrl(URL.createObjectURL(file));
   };
 
+  const handleSaveProfile = () => {
+    const profileData = {
+      nickname,
+      intro,
+      favoriteSong,
+      selectedImageFile,
+    };
 
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [profileImageUrl] = useState("");
+    console.log("저장된 프로필:", profileData);
+    alert("프로필이 저장되었습니다.");
+  };
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const displayImageSrc = previewUrl || profileImageUrl || profileImg;
 
-  const handleSaveProfile = () => {
-    alert("프로필이 저장되었습니다!");
-  };
-
-  const handleSongSearch = () => {
-    alert("노래 검색");
-  };
-
   return (
-    <section className="profile-section">
-      <div className="profile-top">
-        <div className="profile-image-box">
-          <img src={displayImageSrc} alt="프로필" className="profile-img" />
-          
-          <button
-            type="button"
-            className="edit-profile-btn"
-            onClick={handleClickEditIcon}
-          >
-            🖉
-          </button>
+    <div className="profile-section">
+      <div className="profile-left">
+        <div className="profile-top">
+          <div className="profile-image-box">
+            <img src={displayImageSrc} alt="프로필 이미지" className="profile-img" />
 
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            className="hidden-file-input"
-            onChange={handleFileChange}
-          />
+            <button
+              type="button"
+              className="profile-edit-btn"
+              onClick={handleClickEditIcon}
+            >
+              ✎
+            </button>
+
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="profile-file-input"
+              onChange={handleFileChange}
+            />
+          </div>
+
+          <h2 className="profile-nickname">{nickname}</h2>
         </div>
 
-        <div className="nickname">Likelion#1253</div>
+        <div className="profile-form">
+          <label className="profile-label">한 줄 소개</label>
+          <input
+            className="profile-input"
+            value={intro}
+            onChange={(e) => setIntro(e.target.value)}
+            placeholder="한 줄 소개를 입력해주세요"
+          />
 
-        <button className="save-btn" onClick={handleSaveProfile}>
-          프로필 저장
-        </button>
+          <label className="profile-label">좋아하는 노래</label>
+          <div className="song-input-box">
+            <span className="song-icon">🎵</span>
+            <input
+              className="song-input"
+              value={favoriteSong}
+              onChange={(e) => setFavoriteSong(e.target.value)}
+              placeholder="좋아하는 노래를 입력해주세요"
+            />
+            <span className="search-icon">⌕</span>
+          </div>
+        </div>
       </div>
 
-      <div className="profile-inform">
-        <div className="profile-text">
-        <div>한 줄 소개</div>
-        <input
-          type="text"
-          placeholder="안녕하세요"
-        />
-        </div>
-
-        <div>좋아하는 노래</div>
-        <div className="profile-song">
-          <span>🎵</span>
-          <input
-            type="text"
-            placeholder="내꺼하자 - 인피니트"
-          />
-          <button
-            type="button"
-            className="search-btn"
-            onClick={handleSongSearch}
-          >
-            🔍
-          </button>
-        </div>
-      </div>
-    </section>
+      <button type="button" className="profile-save-btn" onClick={handleSaveProfile}>
+        프로필 저장
+      </button>
+    </div>
   );
-}
+};
 
 export default Profile;
